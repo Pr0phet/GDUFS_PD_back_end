@@ -1,0 +1,5 @@
+#敏感配置文件过滤
+/Application/Common/Conf
+/Application/Home/Conf
+#系统自动生成文件过滤
+/.idea

@@ -1,0 +1,13 @@
+[ 2016-07-15T11:10:50+08:00 ] ::1 /Wechat/
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000025s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000838s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001883s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001968s ]
+NOTIC: [8] A session had already been started - ignoring session_start() /Applications/MAMP/htdocs/Wechat/ThinkPHP/Common/functions.php 第 1263 行.
+NOTIC: [8] Undefined index: HTTP_RAW_POST_DATA /Applications/MAMP/htdocs/Wechat/Application/Home/Controller/IndexController.class.php 第 19 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000996s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001114s ]
+

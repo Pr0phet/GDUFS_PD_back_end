@@ -1,0 +1,18 @@
+[ 2016-07-23T16:21:46+08:00 ] ::1 /Wechat/Public/css/AMap.CloudDataSearchRender1120.css
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000031s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000616s ]
+ERR: 无法加载模块:Public
+
+[ 2016-07-23T16:21:46+08:00 ] ::1 /Wechat/Public/js/AMap.CloudDataSearchRender.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000023s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000560s ]
+ERR: 无法加载模块:Public
+
+[ 2016-07-23T16:21:56+08:00 ] ::1 /Wechat/pics/southBound.jpg
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000022s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000451s ]
+ERR: 无法加载模块:Pics
+
