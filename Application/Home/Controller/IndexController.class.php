@@ -111,7 +111,7 @@ class IndexController extends Controller
     {
         if($obj -> Event == "subscribe")
         {
-            $welcomeMessage = "恭喜你发现了镇*之宝,本服务号可以绑定微信并查询个人信息.
+            $welcomeMessage = "恭喜你发现了镇会之宝,本服务号可以绑定微信并查询个人信息.
             如果校内导航定位不够精确请复制链接到手机浏览器中进行~";
             echo $this->packText($welcomeMessage,$obj);
             //无绑定用户欢迎信息
@@ -125,6 +125,8 @@ class IndexController extends Controller
             switch($obj -> EventKey)
             {
                 case "ver1.0-2":echo $this -> packText("若绑定请输入姓名+身份证后6位验证身份,如输入:榨汁机＋666666.若是重新绑定也请直接输入",$obj);
+                    break;
+                case "main1-1": echo $this -> packText("",$obj);
                     break;
                 case "main1-2": $list = $this ->listNews();
                                 echo $this -> packText($list,$obj);
@@ -165,13 +167,15 @@ class IndexController extends Controller
 
     private function checkBind($obj)
     {
-        $db = M('newstudent');
+        $db = M('wechatuser');
         $openid = $obj -> FromUserName;
         $condition['openid'] = (string)$openid;
         $data = $db -> where($condition) -> find();
         if($data)
         {
-            return $data;
+            $db2 = M('newstudent');
+            $res = $db2 -> WHERE('id = '.$data['studentid']) -> find();
+            return $res;
         }
             else
         {
@@ -186,30 +190,46 @@ class IndexController extends Controller
     {
         //第一步绑定学号到数据库(即数据条与微信openId绑定)
         $db = M('newstudent');
-        $condition['name'] = $number[0];
-        $user = $db -> where($condition) -> find();
+        $user = $db -> query("select * FROM __TABLE__ WHERE name = '$number[0]' ");  //寻找数据库中有无此姓名
+        $num = 0;
         //修改相应的openID
-        if($user)
+        if ($user != NULL || $user != FALSE)    //判断姓名寻找结果
         {
-            if(substr($user['idcard'],-6) == $number[1])
+            for($i = 0; $i < count($user) ;$i++)    //排除重名情况
             {
-                $openid = $obj -> FromUserName;
-                $db -> where($condition) -> setField('openid', "$openid");
+                if (substr($user[$i]['idcard'], -6) == $number[1])    //验证身份证后6位
+                {
+                    $openid = (string)$obj->FromUserName;
+                    $id  = $user[$i]['id'];
+                    $wechatuser = M('wechatuser');
+                    $res = $wechatuser -> query("SELECT * FROM wechatuser WHERE openid = '$openid'");
+                    if($res)
+                    {
+                         $wechatuser -> execute("UPDATE wechatuser SET studentid = '$id' WHERE openid = '$openid'"); //更新微信用户对应id
+                    }
+                        else
+                    {
+                        $wechatuser -> execute("INSERT INTO wechatuser (`openid`,`studentid`) VALUES('$openid','$id')"); //新增微信用户
+                    }
+                    $num = $i;
+                    break;
+                }
             }
-            else
+            if($num == count($user))    //寻找不了匹配的身份证
             {
-                echo $this -> packText("身份证后六位错误",$obj);
+                $this->packText("身份证后六位错误", $obj);
                 exit;
             }
         }
         else
         {
-            echo $this -> packText("查无此姓名",$obj);
+            echo $this->packText("查无此姓名", $obj);
             exit;
         }
 
+
         //第二步利用数据库查询到的姓名绑定到微信用户的备注名
-        $name = $user['name'];
+        $name = $user[$num]['name'];
         $url = "https://api.weixin.qq.com/cgi-bin/user/info/updateremark?access_token=";
         $openid = $obj -> FromUserName;
         $data = "
@@ -233,7 +253,7 @@ class IndexController extends Controller
 
         //第三步完成绑定,推送出欢迎信息
         $Welcome_TPL = "绑定成功!欢迎您,%s";
-        $welcome = sprintf($Welcome_TPL,$user['name']);
+        $welcome = sprintf($Welcome_TPL,$name);
         return $welcome;
     }
 
