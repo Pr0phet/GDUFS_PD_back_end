@@ -112,7 +112,7 @@ class IndexController extends Controller
         if($obj -> Event == "subscribe")
         {
             $welcomeMessage = "恭喜你发现了镇会之宝,本服务号可以绑定微信并查询个人信息.
-            如果校内导航定位不够精确请复制链接到手机浏览器中进行~";
+            如果校内导航定位不够精确请刷新一遍或复制链接到手机浏览器中进行~";
             echo $this->packText($welcomeMessage,$obj);
             //无绑定用户欢迎信息
         }
@@ -151,7 +151,7 @@ class IndexController extends Controller
 
     Private function receiveText($obj)
     {
-        if(preg_match("/.+\+[0-9]{6}/",$obj -> Content))
+        if(preg_match("/.+\+\w{6}/",$obj -> Content))
         {
             //拆分用户字符串
             $number = explode("+",$obj -> Content);
@@ -316,15 +316,20 @@ class IndexController extends Controller
         </xml>
         ";
         $INFO =
-            "姓名:".$data['name']."
+            "
+            —————————
+            姓名:".$data['name']."
             学号:".$data['studentcode']."
             学院:".$data['college']."
             班级:".$data['class']."
+            专业:".$data['subject']."
             宿舍:".$data['domi']."
             朋辈导师:".$data['studenttutorname']."
             朋导电话:".$data['studenttutorphone']."
             辅导员姓名:".$data['headtutorname']."
             辅导员电话:".$data['headtutorphone']. "
+            ——————————
+            暂无的信息会陆续补上~感谢使用本系统
             点击阅读全文进入广外官网";
         $content = sprintf($XMLTPL, $obj -> FromUserName, $obj -> ToUserName, time(), "个人信息", $INFO);
         return $content;
