@@ -95,10 +95,13 @@ class IndexController extends Controller
         $act = curl_init();
         curl_setopt($act,CURLOPT_POST,1);
         curl_setopt($act,CURLOPT_URL,$targetUrl);
-        curl_setopt($act,CURLOPT_POSTFIELDS,$data);
+        if(!empty($data))
+        {
+            curl_setopt($act,CURLOPT_POSTFIELDS,$data);
+            curl_setopt($act,CURLOPT_HEADER,array('Content-Type: application/json; charset=utf-8',
+                'Content-Length: ' . strlen($data)));
+        }
         curl_setopt($act,CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($act,CURLOPT_HEADER,array('Content-Type: application/json; charset=utf-8',
-            'Content-Length: ' . strlen($data)));
         $feedback = curl_exec($act);
         curl_close($act);
         return $feedback;
@@ -124,7 +127,7 @@ class IndexController extends Controller
         {
             switch($obj -> EventKey)
             {
-                case "ver1.0-2":echo $this -> packText("若绑定请输入姓名+身份证后6位验证身份,如输入:榨汁机＋666666.若是重新绑定也请直接输入",$obj);
+                case "ver1.0-2":echo $this -> packText("若绑定请输入姓名+身份证后6位验证身份,如输入:榨汁机＋666666.若是重新绑定也请直接输入(注意加号是英语的+哦)",$obj);
                     break;
                 case "main1-1": echo $this -> packText("",$obj);
                     break;
@@ -160,7 +163,7 @@ class IndexController extends Controller
         }
         else
         {
-            echo $this -> packText("请输入合法的姓名+身份证后6位",$obj);
+            echo $this -> packText("请输入合法的姓名+身份证后6位(是不是+号漏了呢?   是不是+号不是英文的+号呢?)",$obj);
         }
     }
 
@@ -338,10 +341,15 @@ class IndexController extends Controller
 
     private function getNews($num)
     {
+        $url = "https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token=";
+        $count = $this -> sendJson($url);
+        $count = json_decode($count,1);
+        $news_num = abs($count['news_count']-20);
+
         $data = "
         {
             \"type\":\"news\",
-            \"offset\":0,
+            \"offset\":$news_num,
             \"count\":20
         }
         ";

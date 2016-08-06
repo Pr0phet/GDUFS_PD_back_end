@@ -74,6 +74,7 @@
     	var geolocation = new AMap.Geolocation({
     		enableHighAccuracy:true,
     		timeout:10000,
+        panToLocation:false
     	});
     	map.addControl(geolocation);
         geolocation.watchPosition();
